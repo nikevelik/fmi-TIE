@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpotHawk — Business Model Canvas</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161b25;
+    --surface2: #1e2536;
+    --accent: #4f8ef7;
+    --accent2: #7b5cf0;
+    --accent3: #2dd4bf;
+    --text: #e8eaf0;
+    --muted: #8892a4;
+    --border: #2a3348;
+    --slide-w: 1200px;
+    --slide-h: 675px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #06080d;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    gap: 16px;
+  }
+
+  /* ── Controls ── */
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 20px;
+    position: sticky;
+    top: 16px;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(0,0,0,.5);
+  }
+
+  #controls button {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background .15s, border-color .15s;
+  }
+  #controls button:hover { background: var(--accent); border-color: var(--accent); }
+  #controls button:disabled { opacity: .3; cursor: default; }
+  #controls button:disabled:hover { background: var(--surface2); border-color: var(--border); }
+
+  #slide-counter { font-size: 13px; color: var(--muted); min-width: 60px; text-align: center; }
+
+  /* ── Slide viewport ── */
+  #viewport {
+    width: 100%;
+    max-width: var(--slide-w);
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 48px rgba(0,0,0,.7);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    padding: 48px 56px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* ── Typography ── */
+  .slide-label {
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: clamp(32px, 4.5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h2 {
+    font-size: clamp(22px, 2.8vw, 34px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ── Cards ── */
+  .cards {
+    display: grid;
+    gap: 14px;
+    flex: 1;
+    margin-top: 24px;
+  }
+  .cards.cols-2 { grid-template-columns: 1fr 1fr; }
+  .cards.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .cards.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--accent); }
+
+  .card-icon { font-size: 22px; margin-bottom: 2px; }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--accent3);
+  }
+
+  .card p, .card li {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .card ul { padding-left: 14px; }
+  .card li { margin-bottom: 3px; }
+
+  /* ── BMC grid ── */
+  .bmc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    margin-top: 20px;
+  }
+
+  .bmc-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+  }
+
+  .bmc-cell.partners   { grid-row: 1 / 3; grid-column: 1; }
+  .bmc-cell.activities { grid-row: 1 / 2; grid-column: 2; }
+  .bmc-cell.value      { grid-row: 1 / 3; grid-column: 3; }
+  .bmc-cell.relations  { grid-row: 1 / 2; grid-column: 4; }
+  .bmc-cell.segments   { grid-row: 1 / 3; grid-column: 5; }
+  .bmc-cell.resources  { grid-row: 2 / 3; grid-column: 2; }
+  .bmc-cell.channels   { grid-row: 2 / 3; grid-column: 4; }
+  .bmc-cell.costs      { grid-row: 3 / 4; grid-column: 1 / 4; }
+  .bmc-cell.revenue    { grid-row: 3 / 4; grid-column: 4 / 6; }
+
+  .bmc-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .bmc-cell p, .bmc-cell li {
+    font-size: 9.5px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .bmc-cell ul { padding-left: 10px; }
+  .bmc-cell li { margin-bottom: 1px; }
+
+  /* ── Segment split layout ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex: 1;
+    margin-top: 24px;
+  }
+
+  /* ── Title slide specific ── */
+  .title-slide {
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+  }
+  .title-slide::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(79,142,247,.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .title-slide::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: 200px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(123,92,240,.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .title-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 32px;
+  }
+  .meta-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .meta-item span { color: var(--text); font-weight: 600; }
+
+  /* ── Pill tags ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .tag {
+    background: rgba(79,142,247,.15);
+    border: 1px solid rgba(79,142,247,.3);
+    color: var(--accent);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag.green {
+    background: rgba(45,212,191,.12);
+    border-color: rgba(45,212,191,.3);
+    color: var(--accent3);
+  }
+  .tag.purple {
+    background: rgba(123,92,240,.15);
+    border-color: rgba(123,92,240,.3);
+    color: #a78bfa;
+  }
+
+  /* ── Progress dots ── */
+  #dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background .2s, width .2s;
+  }
+  .dot.active {
+    background: var(--accent);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* ── Mockup slide ── */
+  .mockup-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    margin-top: 20px;
+  }
+  .mockup-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .mockup-num {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .mockup-item p { font-size: 11.5px; color: var(--muted); line-height: 1.5; }
+  .mockup-item strong { display: block; color: var(--text); font-size: 12px; margin-bottom: 2px; }
+
+  /* ── Keyboard hint ── */
+  #kb-hint {
+    font-size: 11px;
+    color: var(--border);
+    margin-top: 4px;
+  }
+  kbd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <button id="prev" disabled>&#8592; Prev</button>
+  <div id="dots"></div>
+  <button id="next">Next &#8594;</button>
+  <span id="slide-counter">1 / 9</span>
+</div>
+
+<div id="viewport">
+
+  <!-- ── SLIDE 1: Title ── -->
+  <div class="slide active title-slide">
+    <div class="slide-label">Entrepreneurship · Business Model</div>
+    <h1>SpotHawk</h1>
+    <p class="subtitle" style="font-size:18px; max-width: 520px; margin-top:14px;">
+      Drone-powered real-time parking intelligence<br>for smarter urban mobility.
+    </p>
+    <div class="title-meta">
+      <div class="meta-item">Designed by <span>Nikola Georgiev</span></div>
+      <div class="meta-item">Date <span>MAR 06</span></div>
+      <div class="meta-item">Version <span>0.02</span></div>
+    </div>
+    <div class="tags" style="margin-top: 28px;">
+      <span class="tag">Urban Mobility</span>
+      <span class="tag">Drone Tech</span>
+      <span class="tag green">Computer Vision</span>
+      <span class="tag purple">Smart Cities</span>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 2: Customer Segments ── -->
+  <div class="slide">
+    <div class="slide-label">Who we serve</div>
+    <h2>Customer Segments</h2>
+    <div class="cards cols-3">
+      <div class="card">
+        <div class="card-icon">🚗</div>
+        <div class="card-title">Urban Drivers</div>
+        <p>Commuters who regularly need parking in busy city centers. Want fast, reliable info on available spots to reduce daily stress.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title">Visitors & Occasional Drivers</div>
+        <p>Tourists, shoppers, or event-goers unfamiliar with local parking patterns. Need easy guidance to free spaces in real time.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <div class="card-title">Municipalities</div>
+        <p>City administrations interested in reducing congestion, optimizing parking infrastructure, and monitoring urban mobility.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 3: Value Propositions ── -->
+  <div class="slide">
+    <div class="slide-label">What we offer</div>
+    <h2>Value Propositions</h2>
+    <div class="cards cols-3" style="grid-template-rows: 1fr 1fr; margin-top: 20px;">
+      <div class="card">
+        <div class="card-icon">📍</div>
+        <div class="card-title">Real-Time Availability</div>
+        <p>Shows which parking spots are free right now, powered by live drone feeds.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔮</div>
+        <div class="card-title">Predictive Guidance</div>
+        <p>Historical data estimates where spots are likely to open soon before you even arrive.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <div class="card-title">Time & Stress Savings</div>
+        <p>Dramatically cuts time spent circling blocks looking for parking.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌿</div>
+        <div class="card-title">Traffic & Fuel Efficiency</div>
+        <p>Reduces unnecessary driving, lowering congestion and emissions across the city.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <div class="card-title">Seamless Mobile Access</div>
+        <p>Available through a mobile app for convenience, anytime and anywhere.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Operational Insights</div>
+        <p>Parking operators and municipalities can monitor usage and optimize space management.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 4: Channels & Relationships ── -->
+  <div class="slide">
+    <div class="slide-label">How we reach & engage</div>
+    <h2>Channels & Customer Relationships</h2>
+    <div class="two-col">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:4px;">Channels</div>
+        <div class="card" style="flex:1">
+          <div class="card-title">📱 Mobile App / Navigation</div>
+          <p>Primary way drivers see available parking spots in real time.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">🔔 Push Notifications</div>
+          <p>Instant updates when a preferred area has free spaces.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">🌐 Website / City Portal</div>
+          <p>Optional access for planning trips in advance.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">🤝 Rideshare Partnerships</div>
+          <p>Expand reach by integrating into apps people already use.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:4px;">Relationships</div>
+        <div class="card" style="flex:1">
+          <div class="card-title">🤖 Self-Service Guidance</div>
+          <p>Users access real-time info with minimal human intervention.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">✨ Personalized Experience</div>
+          <p>Predictive recommendations based on location, history, and preferences.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">⚡ Proactive Notifications</div>
+          <p>Alerts for nearby free spaces or high-probability zones.</p>
+        </div>
+        <div class="card" style="flex:1">
+          <div class="card-title">🛡️ Trust & Reliability</div>
+          <p>Consistently updated data builds long-term user confidence.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 5: Key Activities & Resources ── -->
+  <div class="slide">
+    <div class="slide-label">How we operate</div>
+    <h2>Key Activities & Resources</h2>
+    <div class="two-col">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:4px;">Key Activities</div>
+        <div class="card"><div class="card-title">🚁 Drone Operations</div><p>Patrolling urban areas, keeping drones functional and flight-compliant.</p></div>
+        <div class="card"><div class="card-title">👁️ Data Capture & Processing</div><p>Collecting aerial images and running computer vision algorithms.</p></div>
+        <div class="card"><div class="card-title">🗺️ Real-Time Map Updates</div><p>Continuously integrating drone data into the app and predictive model.</p></div>
+        <div class="card"><div class="card-title">📈 Predictive Analytics</div><p>Refining historical data to forecast parking availability.</p></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:4px;">Key Resources</div>
+        <div class="card"><div class="card-title">🚁 Autonomous Drone Fleet</div><p>Hardware capable of safe urban flight and precision image capture.</p></div>
+        <div class="card"><div class="card-title">🤖 Computer Vision Software</div><p>Algorithms to detect parking occupancy accurately from aerial imagery.</p></div>
+        <div class="card"><div class="card-title">☁️ Data Infrastructure</div><p>Cloud storage, real-time processing, and mapping platforms.</p></div>
+        <div class="card"><div class="card-title">📜 Regulatory Permits</div><p>Legal clearance for urban drone operations from relevant authorities.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 6: Key Partners ── -->
+  <div class="slide">
+    <div class="slide-label">Who we work with</div>
+    <h2>Key Partners</h2>
+    <div class="cards cols-3" style="grid-template-rows: 1fr 1fr; margin-top: 20px;">
+      <div class="card">
+        <div class="card-icon">🏭</div>
+        <div class="card-title">Drone Manufacturers</div>
+        <p>Provide reliable hardware, maintenance support, and replacement parts for the fleet.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">AI / CV Tech Providers</div>
+        <p>Supply software, models, or APIs for real-time image analysis and occupancy detection.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏛️</div>
+        <div class="card-title">City Authorities</div>
+        <p>Grant permissions for aerial surveillance and provide access to municipal parking data.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📡</div>
+        <div class="card-title">Telecom & Cloud Providers</div>
+        <p>Enable real-time data transmission, cloud storage, and processing infrastructure.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗺️</div>
+        <div class="card-title">Mapping Platforms</div>
+        <p>Provide geographical data and integration points for navigation and map rendering.</p>
+      </div>
+      <div class="card" style="border-style:dashed; border-color: rgba(79,142,247,.3);">
+        <div class="card-icon">🅿️</div>
+        <div class="card-title">Parking Operators</div>
+        <p>Municipal and private lot operators who grant access and benefit from usage optimization insights.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 7: Revenue & Costs ── -->
+  <div class="slide">
+    <div class="slide-label">Business model economics</div>
+    <h2>Revenue Streams & Cost Structure</h2>
+    <div class="two-col">
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--accent3); margin-bottom:4px;">Revenue Streams</div>
+        <div class="card">
+          <div class="card-title">💳 Subscriptions</div>
+          <p>Drivers pay monthly/yearly for real-time access and predictive analytics.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🎟️ Pay-Per-Use</div>
+          <p>Occasional users pay per session — no commitment needed.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">🏢 B2B Partnerships</div>
+          <p>Parking operators, municipalities, and logistics companies pay for data integration.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📣 Advertising</div>
+          <p>Local businesses sponsor highlighted zones or promoted areas in the app.</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color: #f87171; margin-bottom:4px;">Cost Structure</div>
+        <div class="card" style="border-color: rgba(248,113,113,.2)">
+          <div class="card-title" style="color:#f87171;">🚁 Drone Fleet</div>
+          <p>Purchase, maintenance, batteries, and replacement cycles.</p>
+        </div>
+        <div class="card" style="border-color: rgba(248,113,113,.2)">
+          <div class="card-title" style="color:#f87171;">💻 Software & AI</div>
+          <p>Development, updates, cloud computing, and computer vision processing.</p>
+        </div>
+        <div class="card" style="border-color: rgba(248,113,113,.2)">
+          <div class="card-title" style="color:#f87171;">👥 Personnel</div>
+          <p>Engineers, drone operators, and customer support staff.</p>
+        </div>
+        <div class="card" style="border-color: rgba(248,113,113,.2)">
+          <div class="card-title" style="color:#f87171;">📋 Regulatory & Insurance</div>
+          <p>Drone flight permits, liability coverage, and compliance fees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 8: Business Model Canvas ── -->
+  <div class="slide" style="padding: 32px 40px;">
+    <div class="slide-label">Full overview</div>
+    <h2 style="font-size:22px; margin-bottom:0;">Business Model Canvas</h2>
+    <div class="bmc-grid">
+      <div class="bmc-cell partners">
+        <div class="bmc-label">Key Partners</div>
+        <ul>
+          <li>Drone manufacturers</li>
+          <li>AI / CV tech providers</li>
+          <li>City authorities</li>
+          <li>Telecom & cloud</li>
+          <li>Mapping platforms</li>
+        </ul>
+      </div>
+      <div class="bmc-cell activities">
+        <div class="bmc-label">Key Activities</div>
+        <ul>
+          <li>Drone ops & maintenance</li>
+          <li>Data capture & processing</li>
+          <li>Real-time map updates</li>
+          <li>Predictive analytics</li>
+          <li>App management</li>
+        </ul>
+      </div>
+      <div class="bmc-cell value">
+        <div class="bmc-label">Value Propositions</div>
+        <ul>
+          <li>Real-time parking availability</li>
+          <li>Predictive guidance</li>
+          <li>Time & stress savings</li>
+          <li>Traffic & fuel efficiency</li>
+          <li>Mobile access</li>
+          <li>Operational insights</li>
+        </ul>
+      </div>
+      <div class="bmc-cell relations">
+        <div class="bmc-label">Customer Relationships</div>
+        <ul>
+          <li>Self-service automated</li>
+          <li>Personalized experience</li>
+          <li>Proactive notifications</li>
+          <li>Trust & reliability</li>
+        </ul>
+      </div>
+      <div class="bmc-cell segments">
+        <div class="bmc-label">Customer Segments</div>
+        <ul>
+          <li>Urban drivers</li>
+          <li>Visitors & tourists</li>
+          <li>City municipalities</li>
+          <li>Parking operators</li>
+        </ul>
+      </div>
+      <div class="bmc-cell resources">
+        <div class="bmc-label">Key Resources</div>
+        <ul>
+          <li>Drone fleet</li>
+          <li>CV software</li>
+          <li>Data infrastructure</li>
+          <li>Skilled team</li>
+          <li>Permits</li>
+        </ul>
+      </div>
+      <div class="bmc-cell channels">
+        <div class="bmc-label">Channels</div>
+        <ul>
+          <li>Mobile app</li>
+          <li>Push notifications</li>
+          <li>Website / portal</li>
+          <li>Rideshare integration</li>
+        </ul>
+      </div>
+      <div class="bmc-cell costs">
+        <div class="bmc-label">Cost Structure</div>
+        <p>Drone fleet · Software & AI · Data infrastructure · Personnel · Regulatory & insurance · Marketing</p>
+      </div>
+      <div class="bmc-cell revenue">
+        <div class="bmc-label">Revenue Streams</div>
+        <p>Subscriptions · Pay-per-use · B2B partnerships · Advertising & premium placement</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLIDE 9: App Mockups ── -->
+  <div class="slide" style="padding: 36px 48px;">
+    <div class="slide-label">Product vision</div>
+    <h2>App Mockups — Screen Overview</h2>
+    <div class="mockup-list">
+      <div class="mockup-item">
+        <div class="mockup-num">1</div>
+        <div><strong>Login Screen</strong><p>User authentication with email / social login, option for guest access.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">2</div>
+        <div><strong>Home Screen</strong><p>Overview dashboard: quick stats, recent notifications, and shortcut to map.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">3</div>
+        <div><strong>Parking Map — Default View</strong><p>Real-time map with available spots, user location, search, and filters.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">4</div>
+        <div><strong>Parking Map — Filtered Results</strong><p>Map showing results filtered by distance with search bar active.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">5</div>
+        <div><strong>Parking Map — Spot Selected</strong><p>Spot tapped shows a popup preview with basic info and pricing.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">6</div>
+        <div><strong>Parking Map — No Spots</strong><p>Overlay message indicating no available spots; suggests nearby alternatives.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">7</div>
+        <div><strong>Parking Detail — Available</strong><p>Full details: price, restrictions, distance, photo, and get-directions button.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">8</div>
+        <div><strong>Parking Detail — Reserve</strong><p>Confirmation dialog or navigation screen after tapping get directions.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">9</div>
+        <div><strong>Parking Detail — Occupied</strong><p>Details for an occupied spot with suggestions for nearby alternatives.</p></div>
+      </div>
+      <div class="mockup-item">
+        <div class="mockup-num">10</div>
+        <div><strong>Parking Detail — Error State</strong><p>Loading spinner or error message if details fail to load gracefully.</p></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /viewport -->
+
+<div id="kb-hint">Navigate with <kbd>←</kbd> <kbd>→</kbd> arrow keys or click the buttons above</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const counter = document.getElementById('slide-counter');
+  const dotsContainer = document.getElementById('dots');
+  let current = 0;
+  const total = slides.length;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${total}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  prevBtn.addEventListener('click', () => current > 0 && goTo(current - 1));
+  nextBtn.addEventListener('click', () => current < total - 1 && goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { if (current < total - 1) goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { if (current > 0)         goTo(current - 1); }
+  });
+</script>
+</body>
+</html>
